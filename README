@@ -24,6 +24,8 @@ Links:
 
 == EXAMPLE
 
+	require 'amazon/ecs'
+	
     # set the default options; options will be camelized and converted to REST request parameters.
     Amazon::Ecs.options = {:aWS_access_key_id => [your developer token]}
 

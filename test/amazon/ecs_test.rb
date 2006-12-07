@@ -2,7 +2,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class Amazon::EcsTest < Test::Unit::TestCase
 
-  Amazon::Ecs.options = {:response_group => 'Large', :aWS_access_key_id => '0XQXXC6YV2C85DX1BF02'}
+  AWS_ACCESS_KEY_ID = ''
+  raise "Please specify set your AWS_ACCESS_KEY_ID" unless AWS_ACCESS_KEY_ID
+  
+  Amazon::Ecs.options = {:response_group => 'Large', :aWS_access_key_id => AWS_ACCESS_KEY_ID}
 
   def test_item_search
     resp = Amazon::Ecs.item_search('ruby')
