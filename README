@@ -35,7 +35,7 @@ Links:
     res.has_error?            # return true if there is an error
     res.error                 # return error message if there is any
     res.total_pages           # return total pages
-    res.total_results         # return total pages
+    res.total_results         # return total results
     res.item_page             # return current page no if :item_page option is provided
 
     # traverse through each item (Amazon::Element)
