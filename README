@@ -1,0 +1,101 @@
+== amazon-ecs
+
+Generic Amazon E-commerce REST API using Hpricot with configurable 
+default options and method call options. Uses Response and 
+Element classes for easy access access to REST XML output. Supports ECS 4.0.
+
+It is generic, so you can easily extend <tt>Amazon::Ecs</tt> to support 
+other not implemented REST operations; and it is also generic because it just wraps around
+Hpricot element object, instead of providing one-to-one object/attributes to XML elements map.
+
+If in the future, there is a change in REST XML output structure, 
+no changes will be required on <tt>amazon-ecs</tt> library, 
+instead you just need to change the element path.
+
+Version: 0.5.0
+
+Links:
+* http://amazon-ecs.rubyforge.org
+* http://www.pluitsolutions.com/amazon-ecs
+
+== INSTALLATION
+
+  $ gem install amazon-ecs
+
+== EXAMPLE
+
+    # set the default options; options will be camelized and converted to REST request parameters.
+    Amazon::Ecs.options = {:aWS_access_key_id => [your developer token]}
+
+    # options provided on method call will merge with the default options
+    res = Amazon::Ecs.item_search('ruby', {:response_group => 'Medium', :sort => 'salesrank'})
+
+    # some common response object methods
+    res.is_valid_request?     # return true request is valid
+    res.has_error?            # return true if there is an error
+    res.error                 # return error message if there is any
+    res.total_pages           # return total pages
+    res.total_results         # return total pages
+    res.item_page             # return current page no if :item_page option is provided
+
+    # traverse through each item (Amazon::Element)
+    res.items.each do |item|
+      # retrieve element text value, following the XML output structure
+      item.get('asin')
+      item.get('itemattributes/title')
+
+      # or you can also do it this way, to retrieve the title
+      atts = item.get('itemattributes')
+      atts.get('title')
+  
+      # return first author or a string array of authors
+      atts.get('author')          # 'Author 1'
+      atts.get_array('author')    # ['Author 1', 'Author 2', ...]
+  
+      # return an hash of children text values with the element names as the keys
+      item.get_hash('smallimage') # {:url => ..., :width => ..., :height => ...}
+  
+      # note that '/' returns Hpricot::Elements array object, nil if not found
+      reviews = item/'editorialreview'
+  
+      # traverse through Hpricot elements
+      reviews.each do |review|
+        # Getting hash value out of Hpricot element
+        Amazon::Element.get_hash(review) # [:source => ..., :content ==> ...]
+    
+        # Or can retrieve them seperately
+        Amazon::Element.get(review, 'source')
+        Amazon::Element.get(review, 'content')
+      end
+    end
+
+Refer to Amazon ECS documentation for more information on Amazon REST request parameters and XML output:
+http://docs.amazonwebservices.com/AWSEcommerceService/2005-10-05/index.html
+
+To get a sample of Amazon REST response XML output, use AWSZone.com scratch pad:
+http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
+
+== LICENSE
+
+(The MIT License)
+
+Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
