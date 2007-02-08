@@ -2,10 +2,15 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class Amazon::EcsTest < Test::Unit::TestCase
 
-  AWS_ACCESS_KEY_ID = ''
-  raise "Please specify set your AWS_ACCESS_KEY_ID" unless AWS_ACCESS_KEY_ID
+  AWS_ACCESS_KEY_ID = '0XQXXC6YV2C85DX1BF02'
+  raise "Please specify set your AWS_ACCESS_KEY_ID" if AWS_ACCESS_KEY_ID.empty?
   
-  Amazon::Ecs.options = {:response_group => 'Large', :aWS_access_key_id => AWS_ACCESS_KEY_ID}
+  Amazon::Ecs.configure do |options|
+    options[:response_group] = 'Large'
+    options[:aWS_access_key_id] = AWS_ACCESS_KEY_ID
+  end
+
+  ## Test item_search
 
   def test_item_search
     resp = Amazon::Ecs.item_search('ruby')
@@ -59,8 +64,7 @@ class Amazon::EcsTest < Test::Unit::TestCase
     small_image = item.get_hash("smallimage")
     
     assert_equal 3, small_image.keys.size
-    assert_match "images/P/0974514055.01._SCTHUMBZZZ_V1128790749_.jpg", 
-      small_image[:url]
+    assert_match "0974514055.01", small_image[:url]
     assert_equal "75", small_image[:height]
     assert_equal "59", small_image[:width]
     
@@ -73,6 +77,7 @@ class Amazon::EcsTest < Test::Unit::TestCase
 	end
   end
   
+  ## Test item_lookup
   def test_item_lookup
     resp = Amazon::Ecs.item_lookup('0974514055')
     assert_equal "Programming Ruby: The Pragmatic Programmers' Guide, Second Edition", 
@@ -90,5 +95,16 @@ class Amazon::EcsTest < Test::Unit::TestCase
     
     assert resp.is_valid_request?
     assert_match(/ABC is not a valid value for ItemId/, resp.error)
+  end  
+  
+  def test_search_and_convert
+    resp = Amazon::Ecs.item_lookup('0974514055')
+    title = resp.first_item.get("itemattributes/title")
+    authors = resp.first_item.search_and_convert("author")
+    
+    assert_equal "Programming Ruby: The Pragmatic Programmers' Guide, Second Edition", title
+    assert authors.is_a?(Array)
+    assert 3, authors.size
+    assert_equal "Dave Thomas", authors.first.get
   end  
 end

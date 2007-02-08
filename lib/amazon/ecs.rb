@@ -1,3 +1,26 @@
+#--
+# Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
 require 'net/http'
 require 'hpricot'
 require 'cgi'
@@ -11,11 +34,12 @@ module Amazon
         :uk => 'http://webservices.amazon.co.uk/onca/xml?Service=AWSECommerceService',
         :ca => 'http://webservices.amazon.ca/onca/xml?Service=AWSECommerceService',
         :de => 'http://webservices.amazon.de/onca/xml?Service=AWSECommerceService',
-        :jp => 'http://webservices.amazon.de/onca/xml?Service=AWSECommerceService',
-        :fr => 'http://webservices.amazon.co.jp/onca/xml?Service=AWSECommerceService'
+        :jp => 'http://webservices.amazon.co.jp/onca/xml?Service=AWSECommerceService',
+        :fr => 'http://webservices.amazon.fr/onca/xml?Service=AWSECommerceService'
     }
     
-    @@debug, @@options = nil
+    @@options = {}
+    @@debug = false
 
     # Default search options
     def self.options
@@ -35,7 +59,12 @@ module Amazon
     # Set debug flag to true or false.
     def self.debug=(dbg)
       @@debug = dbg
-    end    
+    end
+    
+    def self.configure(&proc)
+      raise ArgumentError, "Block is required." unless block_given?
+      yield @@options
+    end
     
     # Search amazon items with search terms. Default search index option is 'Books'.
     # For other search type other than keywords, please specify :type => [search type param name].
@@ -60,12 +89,9 @@ module Amazon
       opts[:operation] = 'ItemLookup'
       opts[:item_id] = item_id
       
-      # not allowed in item_lookup
-      opts.delete(:search_index)
-      
       self.send_request(opts)
-    end
-    
+    end    
+          
     # Generic send request to ECS REST service. You have to specify the :operation parameter.
     def self.send_request(opts)
       request_url = prepare_url(opts)
@@ -146,8 +172,10 @@ module Amazon
     protected
       def self.log(s)
         return unless self.debug
-        if RAILS_DEFAULT_LOGGER
+        if defined? RAILS_DEFAULT_LOGGER
           RAILS_DEFAULT_LOGGER.error(s)
+        elsif defined? LOGGER
+          LOGGER.error(s)
         else
           puts s
         end
@@ -190,6 +218,16 @@ module Amazon
     def /(path)
       elements = @element/path
       return nil if elements.size == 0
+      elements
+    end
+    
+    # Find Hpricot::Elements matching the given path, and convert to Amazon::Element.
+    # Returns an array Amazon::Elements if more than Hpricot::Elements size is greater than 1.
+    def search_and_convert(path)
+      elements = self./(path)
+      return unless elements
+      elements = elements.map{|element| Element.new(element)}
+      return elements.first if elements.size == 1
       elements
     end
 
