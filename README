@@ -22,7 +22,7 @@ Version: 0.5.1
 
     require 'amazon/ecs'
 	
-   	# set the default options; options will be camelized and converted to REST request parameters.
+    # set the default options; options will be camelized and converted to REST request parameters.
     Amazon::Ecs.options = {:aWS_access_key_id => [your developer token]}
 
     # options provided on method call will merge with the default options
@@ -38,11 +38,11 @@ Version: 0.5.1
 
     # traverse through each item (Amazon::Element)
     res.items.each do |item|
-      # retrieve element text value, following the XML output structure
+      # retrieve string value using XML path
       item.get('asin')
       item.get('itemattributes/title')
 
-      # get by default returns text value, to return Amazon::Element instance
+      # or return Amazon::Element instance
       atts = item.search_and_convert('itemattributes')
       atts.get('title')
   
