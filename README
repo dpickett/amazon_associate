@@ -14,10 +14,6 @@ instead you just need to change the element path.
 
 Version: 0.5.1
 
-Links:
-* http://amazon-ecs.rubyforge.org
-* http://www.pluitsolutions.com/amazon-ecs
-
 == INSTALLATION
 
   $ gem install amazon-ecs
@@ -46,8 +42,8 @@ Links:
       item.get('asin')
       item.get('itemattributes/title')
 
-      # or you can also do it this way, to retrieve the title
-      atts = item.get('itemattributes')
+      # get by default returns text value, to return Amazon::Element instance
+      atts = item.search_and_convert('itemattributes')
       atts.get('title')
   
       # return first author or a string array of authors
@@ -74,6 +70,9 @@ Links:
         el.get_unescaped('source')
         el.get_unescaped('content')
       end
+      
+      # returns Amazon::Element instead of string
+      item.search_and_convert('itemattributes').
     end
 
 Refer to Amazon ECS documentation for more information on Amazon REST request parameters and XML output:
@@ -82,27 +81,13 @@ http://docs.amazonwebservices.com/AWSEcommerceService/2006-09-13/
 To get a sample of Amazon REST response XML output, use AWSZone.com scratch pad:
 http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 
+== LINKS
+
+* http://amazon-ecs.rubyforge.org
+* http://www.pluitsolutions.com/amazon-ecs
+
 == LICENSE
 
 (The MIT License)
 
 Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

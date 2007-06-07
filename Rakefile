@@ -24,3 +24,13 @@ end
 Rake::GemPackageTask.new(spec) do |pkg| 
   pkg.need_tar = true 
 end
+
+desc "Create the RDOC html files"
+rd = Rake::RDocTask.new("rdoc") { |rdoc|
+  rdoc.rdoc_dir = 'doc'
+  rdoc.title    = "amazon-ecs"
+  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'README'
+  rdoc.rdoc_files.include('README', 'CHANGELOG')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.include('test/**/*.rb')
+}

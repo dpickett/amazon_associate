@@ -28,7 +28,6 @@ require 'cgi'
 module Amazon
   class RequestError < StandardError; end
   
-  # :include: README 
   class Ecs
     SERVICE_URLS = {:us => 'http://webservices.amazon.com/onca/xml?Service=AWSECommerceService',
         :uk => 'http://webservices.amazon.co.uk/onca/xml?Service=AWSECommerceService',
