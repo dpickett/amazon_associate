@@ -260,7 +260,8 @@ module Amazon
     
     # Similar to #get_unescaped, except an element object must be passed-in.    
     def self.get_unescaped(element, path='')
-      CGI::unescapeHTML(get(element, path))
+      result = get(element, path)
+      CGI::unescapeHTML(result) if result
     end
 
     # Similar to #get_array, except an element object must be passed-in.
