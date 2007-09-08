@@ -1,4 +1,8 @@
-0.5.1 2006-02-08
+0.5.2 2007-09-08
+----------------
+* Fixed Amazon::Element.get_unescaped error when result returned for given element path is nil
+
+0.5.1 2007-02-08
 ----------------
 * Fixed Amazon Japan and France URL error
 * Removed opts.delete(:search_index) from item_lookup, SearchIndex param is allowed 
