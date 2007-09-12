@@ -68,7 +68,6 @@ module Amazon
     # Search amazon items with search terms. Default search index option is 'Books'.
     # For other search type other than keywords, please specify :type => [search type param name].
     def self.item_search(terms, opts = {})
-      opts = self.options.merge(opts) if self.options
       opts[:operation] = 'ItemSearch'
       opts[:search_index] = opts[:search_index] || 'Books'
       
@@ -84,7 +83,6 @@ module Amazon
 
     # Search an item by ASIN no.
     def self.item_lookup(item_id, opts = {})
-      opts = self.options.merge(opts) if self.options
       opts[:operation] = 'ItemLookup'
       opts[:item_id] = item_id
       
@@ -93,6 +91,7 @@ module Amazon
           
     # Generic send request to ECS REST service. You have to specify the :operation parameter.
     def self.send_request(opts)
+      opts = self.options.merge(opts) if self.options
       request_url = prepare_url(opts)
       log "Request URL: #{request_url}"
       

@@ -1,3 +1,7 @@
+0.5.3 2007-09-12
+----------------
+* send_request to use default options.
+
 0.5.2 2007-09-08
 ----------------
 * Fixed Amazon::Element.get_unescaped error when result returned for given element path is nil
