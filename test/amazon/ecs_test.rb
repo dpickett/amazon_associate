@@ -1,8 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class Amazon::EcsTest < Test::Unit::TestCase
-
-  AWS_ACCESS_KEY_ID = ''
   raise "Please specify set your AWS_ACCESS_KEY_ID" if AWS_ACCESS_KEY_ID.empty?
   
   Amazon::Ecs.configure do |options|
@@ -64,7 +62,7 @@ class Amazon::EcsTest < Test::Unit::TestCase
     small_image = item.get_hash("smallimage")
     
     assert_equal 3, small_image.keys.size
-    assert_match "0974514055.01", small_image[:url]
+    assert small_image[:url] != nil
     assert_equal "75", small_image[:height]
     assert_equal "59", small_image[:width]
     

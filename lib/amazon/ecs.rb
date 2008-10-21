@@ -37,6 +37,119 @@ module Amazon
         :fr => 'http://webservices.amazon.fr/onca/xml?Service=AWSECommerceService'
     }
     
+    # The sort types available to each product search index.
+    SORT_TYPES = {
+      'Apparel' => %w[relevancerank salesrank pricerank inverseprice -launch-date sale-flag],
+      'Automotive' => %w[salesrank price -price titlerank -titlerank],
+      'Baby' => %w[psrank salesrank price -price titlerank],
+      'Beauty' => %w[pmrank salesrank price -price -launch-date sale-flag],
+      'Books' => %w[relevancerank salesrank reviewrank pricerank inverse-pricerank daterank titlerank -titlerank],
+      'Classical' => %w[psrank salesrank price -price titlerank -titlerank orig-rel-date],
+      'DigitalMusic' => %w[songtitlerank uploaddaterank],
+      'DVD' => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      'Electronics' => %w[pmrank salesrank reviewrank price -price titlerank],
+      'GourmetFood' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      'HealthPersonalCare' => %w[pmrank salesrank pricerank inverseprice launch-date sale-flag],
+      'Jewelry' => %w[pmrank salesrank pricerank inverseprice launch-date],
+      'Kitchen' => %w[pmrank salesrank price -price titlerank -titlerank],
+      'Magazines' => %w[subslot-salesrank reviewrank price -price daterank titlerank -titlerank],
+      'Merchants' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      'Miscellaneous' => %w[pmrank salesrank price -price titlerank -titlerank],
+      'Music' => %w[psrank salesrank price -price titlerank -titlerank artistrank orig-rel-date release-date],
+      'MusicalInstruments' => %w[pmrank salesrank price -price -launch-date sale-flag],
+      'MusicTracks' => %w[titlerank -titlerank],
+      'OfficeProducts' => %w[pmrank salesrank reviewrank price -price titlerank],
+      'OutdoorLiving' => %w[psrank salesrank price -price titlerank -titlerank],
+      'PCHardware' => %w[psrank salesrank price -price titlerank],
+      'PetSupplies' => %w[+pmrank salesrank price -price titlerank -titlerank],
+      'Photo' => %w[pmrank salesrank titlerank -titlerank],
+      'Restaurants' => %w[relevancerank titlerank],
+      'Software' => %w[pmrank salesrank titlerank price -price],
+      'SportingGoods' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      'Tools' => %w[pmrank salesrank titlerank -titlerank price -price],
+      'Toys' => %w[pmrank salesrank price -price titlerank -age-min],
+      'VHS' => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      'Video' => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      'VideoGames' => %w[pmrank salesrank price -price titlerank],
+      'Wireless' => %w[daterank pricerank invers-pricerank reviewrank salesrank titlerank -titlerank], 
+      'WirelessAccessories' => %w[psrank salesrank titlerank -titlerank]
+    }
+    
+    # Returns an Array of valid sort types for _search_index_, or +nil+ if _search_index_ is invalid.
+    def self.sort_types(search_index)
+      SORT_TYPES.has_key?(search_index) ? SORT_TYPES[search_index] : nil
+    end
+    
+    # Performs BrowseNodeLookup request, defaults to TopSellers ResponseGroup
+    def self.browse_node_lookup(browse_node_id, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:response_group] = opts[:response_group] || 'TopSellers'
+      opts[:operation] = 'BrowseNodeLookup'
+      opts[:browse_node_id] = browse_node_id
+      
+      self.send_request(opts)
+    end
+    
+    # Cart operations build the Item tags from the ASIN
+    # Item.ASIN.Quantity defaults to 1, unless otherwise specified in _opts_
+    
+    # Creates remote shopping cart containing _asin_
+    def self.cart_create(asin, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:operation] = 'CartCreate'
+      opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
+      opts["Item.#{asin}.ASIN"] = asin
+    
+      self.send_request(opts)
+    end
+    
+    # Adds item to remote shopping cart
+    def self.cart_add(asin, cart_id, hmac, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:operation] = 'CartAdd'
+      opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
+      opts["Item.#{asin}.ASIN"] = asin
+      opts[:cart_id] = cart_id
+      opts[:hMAC] = hmac
+    
+      self.send_request(opts)
+    end
+    
+    # Adds item to remote shopping cart
+    def self.cart_get(cart_id, hmac, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:operation] = 'CartGet'
+      opts[:cart_id] = cart_id
+      opts[:hMAC] = hmac
+    
+      self.send_request(opts)
+    end
+    
+    # modifies _cart_item_id_ in remote shopping cart
+    # _quantity_ defaults to 0 to remove the given _cart_item_id_
+    # specify _quantity_ to update cart contents
+    # TODO: FIX TEST COVERAGE HERE - doesn't work
+    def self.cart_modify(cart_item_id, asin, cart_id, hmac, quantity=0, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:operation] = 'CartModify'
+      opts["Item.#{asin}.CartItemId"] = cart_item_id
+      opts["Item.#{asin}.Quantity"] = quantity
+      opts["Item.#{asin}.ASIN"] = asin
+      opts[:cart_id] = cart_id
+      opts[:hMAC] = hmac
+    
+      self.send_request(opts)
+    end
+    
+    # clears contents of remote shopping cart
+    def self.cart_clear(cart_id, hmac, opts = {})
+      opts = self.options.merge(opts) if self.options
+      opts[:operation] = 'CartClear'
+      opts[:cart_id] = cart_id
+      opts[:hMAC] = hmac
+    
+      self.send_request(opts)
+    end
     @@options = {}
     @@debug = false
 

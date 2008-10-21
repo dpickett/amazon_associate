@@ -5,10 +5,10 @@ require 'rake/gempackagetask'
 require 'rake/packagetask'
 
 spec = Gem::Specification.new do |s| 
-  s.name = "amazon-ecs"
-  s.version = "0.5.3"
+  s.name = "ruby_amazon_associates"
+  s.version = "0.5.4"
   s.author = "Herryanto Siatono"
-  s.email = "herryanto@pluitsolutions.com"
+  s.email = "herryanto@pluitsolutions.com dpickett@enlightsolutions.com"
   s.homepage = "http://amazon-ecs.rubyforge.net/"
   s.platform = Gem::Platform::RUBY
   s.summary = "Generic Amazon E-commerce Service (ECS) REST API. Supports ECS 4.0."
@@ -18,7 +18,7 @@ spec = Gem::Specification.new do |s|
   s.test_files = FileList["{test}/**/*test.rb"].to_a
   s.has_rdoc = true
   s.extra_rdoc_files = ["README", "CHANGELOG"]
-  s.add_dependency("hpricot", ">= 0.4")
+  s.add_dependency("hpricot", ">= 0.6")
 end
  
 Rake::GemPackageTask.new(spec) do |pkg| 
