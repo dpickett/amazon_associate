@@ -1,1 +1,1 @@
-require File.dirname(__FILE__) + "/amazon/ecs"
+require "amazon/ecs"

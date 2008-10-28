@@ -125,13 +125,11 @@ module Amazon
     # modifies _cart_item_id_ in remote shopping cart
     # _quantity_ defaults to 0 to remove the given _cart_item_id_
     # specify _quantity_ to update cart contents
-    # TODO: FIX TEST COVERAGE HERE - doesn"t work
     def self.cart_modify(cart_item_id, asin, cart_id, hmac, quantity=0, opts = {})
       opts = self.options.merge(opts) if self.options
       opts[:operation] = "CartModify"
-      opts["Item.#{asin}.CartItemId"] = cart_item_id
-      opts["Item.#{asin}.Quantity"] = quantity
-      opts["Item.#{asin}.ASIN"] = asin
+      opts["Item.1.CartItemId"] = cart_item_id
+      opts["Item.1.Quantity"] = quantity
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
   

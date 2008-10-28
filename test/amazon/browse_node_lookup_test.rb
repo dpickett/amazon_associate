@@ -1,17 +1,6 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class Amazon::BrowseNodeLookupTest < Test::Unit::TestCase
-
-  raise "Please specify set your AWS_ACCESS_KEY_ID" if AWS_ACCESS_KEY_ID.empty?
-  
-  def setup
-    Amazon::Ecs.configure do |options|
-      # I had to remove the options[:response_group] setting because
-      # "Large" isn"t a valid response group for browse_node_lookups
-      options[:aWS_access_key_id] = AWS_ACCESS_KEY_ID
-    end
-  end
-  
   
   ## Test browse_node_lookup
   def test_browse_node_lookup

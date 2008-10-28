@@ -1,16 +1,12 @@
 require File.dirname(__FILE__) + "/../test_helper"
-require File.join(File.dirname(__FILE__), "..", "..", "lib", "amazon", "ecs")
 
 class Amazon::EcsTest < Test::Unit::TestCase
-  raise "Please specify set your AWS_ACCESS_KEY_ID" if AWS_ACCESS_KEY_ID.empty?
-  
-  Amazon::Ecs.configure do |options|
-    options[:response_group] = "Large"
-    options[:aWS_access_key_id] = AWS_ACCESS_KEY_ID
+  def setup
+    Amazon::Ecs.configure do |options|
+      options[:response_group] = "Large"
+    end
   end
-
   ## Test item_search
-
   def test_item_search
     resp = Amazon::Ecs.item_search("ruby")
     assert(resp.is_valid_request?)
@@ -62,7 +58,6 @@ class Amazon::EcsTest < Test::Unit::TestCase
     # test get_hash
     small_image = item.get_hash("smallimage")
     
-    assert !small_image.nil?
     assert_equal 3, small_image.keys.size
     assert small_image[:url] != nil
     assert_equal "75", small_image[:height]
