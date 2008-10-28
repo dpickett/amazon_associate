@@ -12,6 +12,9 @@ class Amazon::CacheTest < Test::Unit::TestCase
     end
     
     teardown do
+      #remove cache directory
+      teardown_cache_directory
+
       #reset caching to off
       Amazon::Ecs.configure do |options|
         options[:caching_strategy] = nil
