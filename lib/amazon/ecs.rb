@@ -171,6 +171,22 @@ module Amazon
     def self.configure(&proc)
       raise ArgumentError, "Block is required." unless block_given?
       yield @@options
+      
+      if !@@options[:caching_strategy].nil?
+        #check for a valid caching strategy
+        unless ["filesystem"].include?(@@options[:caching_strategy])
+          raise Amazon::ConfigurationError, "Invalid caching strategy" 
+        end
+        
+        #check for required options
+        @@options[:caching_options] ||= {}
+        if @@options[:caching_strategy] == "filesystem"
+          #verify that a valid path was specified for filesystem caching
+          if options[:caching_options][:cache_path].nil? || !File.directory?(@@options[:caching_options][:cache_path])
+            raise Amazon::ConfigurationError, "You must specify a cache path for filesystem caching"
+          end
+        end
+      end
     end
   
     # Search amazon items with search terms. Default search index option is "Books".

@@ -102,5 +102,6 @@ class Amazon::EcsTest < Test::Unit::TestCase
     assert authors.is_a?(Array)
     assert 3, authors.size
     assert_equal "Dave Thomas", authors.first.get
-  end  
+  end
+  
 end

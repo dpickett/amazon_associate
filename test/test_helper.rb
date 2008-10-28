@@ -1,11 +1,12 @@
 require "rubygems"
 require "test/unit"
+require "shoulda"
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) , '..', 'lib'))
 require 'amazon'
 
 Amazon::Ecs.configure do |options|
-  options[:aWS_access_key_id] = ""
+  options[:aWS_access_key_id] = "05S9H7883ANCJCTF15G2"
   
   #raise exception if user has not entered their access key
   if options[:aWS_access_key_id] == ""
