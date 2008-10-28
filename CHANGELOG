@@ -1,6 +1,7 @@
 0.5.4 2008-10-21
 * include Chris Martin's patches
 * rename Gem to match Amazon's new name for ECS - Amazon Associates API
+* update to git gemspec format
 
 0.5.3 2007-09-12
 ----------------

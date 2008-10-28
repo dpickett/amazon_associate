@@ -1,3 +1,7 @@
+require "net/http"
+require "hpricot"
+require "cgi"
+
 #--
 # Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
 #
@@ -20,134 +24,127 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
-
-require 'net/http'
-require 'hpricot'
-require 'cgi'
-
 module Amazon
-  class RequestError < StandardError; end
-  
   class Ecs
-    SERVICE_URLS = {:us => 'http://webservices.amazon.com/onca/xml?Service=AWSECommerceService',
-        :uk => 'http://webservices.amazon.co.uk/onca/xml?Service=AWSECommerceService',
-        :ca => 'http://webservices.amazon.ca/onca/xml?Service=AWSECommerceService',
-        :de => 'http://webservices.amazon.de/onca/xml?Service=AWSECommerceService',
-        :jp => 'http://webservices.amazon.co.jp/onca/xml?Service=AWSECommerceService',
-        :fr => 'http://webservices.amazon.fr/onca/xml?Service=AWSECommerceService'
+    SERVICE_URLS = {:us => "http://webservices.amazon.com/onca/xml?Service=AWSECommerceService",
+        :uk => "http://webservices.amazon.co.uk/onca/xml?Service=AWSECommerceService",
+        :ca => "http://webservices.amazon.ca/onca/xml?Service=AWSECommerceService",
+        :de => "http://webservices.amazon.de/onca/xml?Service=AWSECommerceService",
+        :jp => "http://webservices.amazon.co.jp/onca/xml?Service=AWSECommerceService",
+        :fr => "http://webservices.amazon.fr/onca/xml?Service=AWSECommerceService"
     }
-    
+  
     # The sort types available to each product search index.
     SORT_TYPES = {
-      'Apparel' => %w[relevancerank salesrank pricerank inverseprice -launch-date sale-flag],
-      'Automotive' => %w[salesrank price -price titlerank -titlerank],
-      'Baby' => %w[psrank salesrank price -price titlerank],
-      'Beauty' => %w[pmrank salesrank price -price -launch-date sale-flag],
-      'Books' => %w[relevancerank salesrank reviewrank pricerank inverse-pricerank daterank titlerank -titlerank],
-      'Classical' => %w[psrank salesrank price -price titlerank -titlerank orig-rel-date],
-      'DigitalMusic' => %w[songtitlerank uploaddaterank],
-      'DVD' => %w[relevancerank salesrank price -price titlerank -video-release-date],
-      'Electronics' => %w[pmrank salesrank reviewrank price -price titlerank],
-      'GourmetFood' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
-      'HealthPersonalCare' => %w[pmrank salesrank pricerank inverseprice launch-date sale-flag],
-      'Jewelry' => %w[pmrank salesrank pricerank inverseprice launch-date],
-      'Kitchen' => %w[pmrank salesrank price -price titlerank -titlerank],
-      'Magazines' => %w[subslot-salesrank reviewrank price -price daterank titlerank -titlerank],
-      'Merchants' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
-      'Miscellaneous' => %w[pmrank salesrank price -price titlerank -titlerank],
-      'Music' => %w[psrank salesrank price -price titlerank -titlerank artistrank orig-rel-date release-date],
-      'MusicalInstruments' => %w[pmrank salesrank price -price -launch-date sale-flag],
-      'MusicTracks' => %w[titlerank -titlerank],
-      'OfficeProducts' => %w[pmrank salesrank reviewrank price -price titlerank],
-      'OutdoorLiving' => %w[psrank salesrank price -price titlerank -titlerank],
-      'PCHardware' => %w[psrank salesrank price -price titlerank],
-      'PetSupplies' => %w[+pmrank salesrank price -price titlerank -titlerank],
-      'Photo' => %w[pmrank salesrank titlerank -titlerank],
-      'Restaurants' => %w[relevancerank titlerank],
-      'Software' => %w[pmrank salesrank titlerank price -price],
-      'SportingGoods' => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
-      'Tools' => %w[pmrank salesrank titlerank -titlerank price -price],
-      'Toys' => %w[pmrank salesrank price -price titlerank -age-min],
-      'VHS' => %w[relevancerank salesrank price -price titlerank -video-release-date],
-      'Video' => %w[relevancerank salesrank price -price titlerank -video-release-date],
-      'VideoGames' => %w[pmrank salesrank price -price titlerank],
-      'Wireless' => %w[daterank pricerank invers-pricerank reviewrank salesrank titlerank -titlerank], 
-      'WirelessAccessories' => %w[psrank salesrank titlerank -titlerank]
+      "Apparel" => %w[relevancerank salesrank pricerank inverseprice -launch-date sale-flag],
+      "Automotive" => %w[salesrank price -price titlerank -titlerank],
+      "Baby" => %w[psrank salesrank price -price titlerank],
+      "Beauty" => %w[pmrank salesrank price -price -launch-date sale-flag],
+      "Books" => %w[relevancerank salesrank reviewrank pricerank inverse-pricerank daterank titlerank -titlerank],
+      "Classical" => %w[psrank salesrank price -price titlerank -titlerank orig-rel-date],
+      "DigitalMusic" => %w[songtitlerank uploaddaterank],
+      "DVD" => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      "Electronics" => %w[pmrank salesrank reviewrank price -price titlerank],
+      "GourmetFood" => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      "HealthPersonalCare" => %w[pmrank salesrank pricerank inverseprice launch-date sale-flag],
+      "Jewelry" => %w[pmrank salesrank pricerank inverseprice launch-date],
+      "Kitchen" => %w[pmrank salesrank price -price titlerank -titlerank],
+      "Magazines" => %w[subslot-salesrank reviewrank price -price daterank titlerank -titlerank],
+      "Merchants" => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      "Miscellaneous" => %w[pmrank salesrank price -price titlerank -titlerank],
+      "Music" => %w[psrank salesrank price -price titlerank -titlerank artistrank orig-rel-date release-date],
+      "MusicalInstruments" => %w[pmrank salesrank price -price -launch-date sale-flag],
+      "MusicTracks" => %w[titlerank -titlerank],
+      "OfficeProducts" => %w[pmrank salesrank reviewrank price -price titlerank],
+      "OutdoorLiving" => %w[psrank salesrank price -price titlerank -titlerank],
+      "PCHardware" => %w[psrank salesrank price -price titlerank],
+      "PetSupplies" => %w[+pmrank salesrank price -price titlerank -titlerank],
+      "Photo" => %w[pmrank salesrank titlerank -titlerank],
+      "Restaurants" => %w[relevancerank titlerank],
+      "Software" => %w[pmrank salesrank titlerank price -price],
+      "SportingGoods" => %w[relevancerank salesrank pricerank inverseprice launch-date sale-flag],
+      "Tools" => %w[pmrank salesrank titlerank -titlerank price -price],
+      "Toys" => %w[pmrank salesrank price -price titlerank -age-min],
+      "VHS" => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      "Video" => %w[relevancerank salesrank price -price titlerank -video-release-date],
+      "VideoGames" => %w[pmrank salesrank price -price titlerank],
+      "Wireless" => %w[daterank pricerank invers-pricerank reviewrank salesrank titlerank -titlerank], 
+      "WirelessAccessories" => %w[psrank salesrank titlerank -titlerank]
     }
-    
+  
     # Returns an Array of valid sort types for _search_index_, or +nil+ if _search_index_ is invalid.
     def self.sort_types(search_index)
       SORT_TYPES.has_key?(search_index) ? SORT_TYPES[search_index] : nil
     end
-    
+  
     # Performs BrowseNodeLookup request, defaults to TopSellers ResponseGroup
     def self.browse_node_lookup(browse_node_id, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:response_group] = opts[:response_group] || 'TopSellers'
-      opts[:operation] = 'BrowseNodeLookup'
+      opts[:response_group] = opts[:response_group] || "TopSellers"
+      opts[:operation] = "BrowseNodeLookup"
       opts[:browse_node_id] = browse_node_id
-      
+    
       self.send_request(opts)
     end
-    
+  
     # Cart operations build the Item tags from the ASIN
     # Item.ASIN.Quantity defaults to 1, unless otherwise specified in _opts_
-    
+  
     # Creates remote shopping cart containing _asin_
     def self.cart_create(asin, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:operation] = 'CartCreate'
+      opts[:operation] = "CartCreate"
       opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
       opts["Item.#{asin}.ASIN"] = asin
-    
+  
       self.send_request(opts)
     end
-    
+  
     # Adds item to remote shopping cart
     def self.cart_add(asin, cart_id, hmac, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:operation] = 'CartAdd'
+      opts[:operation] = "CartAdd"
       opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
       opts["Item.#{asin}.ASIN"] = asin
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
-    
+  
       self.send_request(opts)
     end
-    
+  
     # Adds item to remote shopping cart
     def self.cart_get(cart_id, hmac, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:operation] = 'CartGet'
+      opts[:operation] = "CartGet"
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
-    
+  
       self.send_request(opts)
     end
-    
+  
     # modifies _cart_item_id_ in remote shopping cart
     # _quantity_ defaults to 0 to remove the given _cart_item_id_
     # specify _quantity_ to update cart contents
-    # TODO: FIX TEST COVERAGE HERE - doesn't work
+    # TODO: FIX TEST COVERAGE HERE - doesn"t work
     def self.cart_modify(cart_item_id, asin, cart_id, hmac, quantity=0, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:operation] = 'CartModify'
+      opts[:operation] = "CartModify"
       opts["Item.#{asin}.CartItemId"] = cart_item_id
       opts["Item.#{asin}.Quantity"] = quantity
       opts["Item.#{asin}.ASIN"] = asin
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
-    
+  
       self.send_request(opts)
     end
-    
+  
     # clears contents of remote shopping cart
     def self.cart_clear(cart_id, hmac, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:operation] = 'CartClear'
+      opts[:operation] = "CartClear"
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
-    
+  
       self.send_request(opts)
     end
     @@options = {}
@@ -157,57 +154,57 @@ module Amazon
     def self.options
       @@options
     end
-    
+  
     # Set default search options
     def self.options=(opts)
       @@options = opts
     end
-    
+  
     # Get debug flag.
     def self.debug
       @@debug
     end
-    
+  
     # Set debug flag to true or false.
     def self.debug=(dbg)
       @@debug = dbg
     end
-    
+  
     def self.configure(&proc)
       raise ArgumentError, "Block is required." unless block_given?
       yield @@options
     end
-    
-    # Search amazon items with search terms. Default search index option is 'Books'.
+  
+    # Search amazon items with search terms. Default search index option is "Books".
     # For other search type other than keywords, please specify :type => [search type param name].
     def self.item_search(terms, opts = {})
-      opts[:operation] = 'ItemSearch'
-      opts[:search_index] = opts[:search_index] || 'Books'
-      
+      opts[:operation] = "ItemSearch"
+      opts[:search_index] = opts[:search_index] || "Books"
+    
       type = opts.delete(:type)
       if type 
         opts[type.to_sym] = terms
       else 
         opts[:keywords] = terms
       end
-      
+    
       self.send_request(opts)
     end
 
     # Search an item by ASIN no.
     def self.item_lookup(item_id, opts = {})
-      opts[:operation] = 'ItemLookup'
+      opts[:operation] = "ItemLookup"
       opts[:item_id] = item_id
-      
+    
       self.send_request(opts)
     end    
-          
+        
     # Generic send request to ECS REST service. You have to specify the :operation parameter.
     def self.send_request(opts)
       opts = self.options.merge(opts) if self.options
       request_url = prepare_url(opts)
       log "Request URL: #{request_url}"
-      
+    
       res = Net::HTTP.get_response(URI::parse(request_url))
       unless res.kind_of? Net::HTTPSuccess
         raise Amazon::RequestError, "HTTP Response: #{res.code} #{res.message}"
@@ -220,6 +217,10 @@ module Amazon
       # XML input is in string format
       def initialize(xml)
         @doc = Hpricot(xml)
+        @items = nil
+        @item_page = nil
+        @total_results = nil
+        @total_pages = nil
       end
 
       # Return Hpricot object.
@@ -241,7 +242,7 @@ module Amazon
       def error
         Element.get(@doc, "error/message")
       end
-      
+    
       # Return an array of Amazon::Element item objects.
       def items
         unless @items
@@ -249,12 +250,12 @@ module Amazon
         end
         @items
       end
-      
+    
       # Return the first item (Amazon::Element)
       def first_item
         items.first
       end
-      
+    
       # Return current page no if :item_page option is when initiating the request.
       def item_page
         unless @item_page
@@ -270,7 +271,7 @@ module Amazon
         end
         @total_results
       end
-      
+    
       # Return total pages.
       def total_pages
         unless @total_pages
@@ -279,7 +280,7 @@ module Amazon
         @total_pages
       end
     end
-    
+  
     protected
       def self.log(s)
         return unless self.debug
@@ -291,23 +292,23 @@ module Amazon
           puts s
         end
       end
-      
+    
     private 
       def self.prepare_url(opts)
         country = opts.delete(:country)
-        country = (country.nil?) ? 'us' : country
+        country = (country.nil?) ? "us" : country
         request_url = SERVICE_URLS[country.to_sym]
-        raise Amazon::RequestError, "Invalid country '#{country}'" unless request_url
-        
-        qs = ''
+        raise Amazon::RequestError, "Invalid country \"#{country}\"" unless request_url
+      
+        qs = ""
         opts.each {|k,v|
           next unless v
-          v = v.join(',') if v.is_a? Array
+          v = v.join(",") if v.is_a? Array
           qs << "&#{camelize(k.to_s)}=#{URI.encode(v.to_s)}"
         }
         "#{request_url}#{qs}"
       end
-      
+    
       def self.camelize(s)
         s.to_s.gsub(/\/(.?)/) { "::" + $1.upcase }.gsub(/(^|_)(.)/) { $2.upcase }
       end
@@ -324,14 +325,14 @@ module Amazon
     def elem
       @element
     end
-    
+  
     # Find Hpricot::Elements matching the given path. Example: element/"author".
     def /(path)
       elements = @element/path
       return nil if elements.size == 0
       elements
     end
-    
+  
     # Find Hpricot::Elements matching the given path, and convert to Amazon::Element.
     # Returns an array Amazon::Elements if more than Hpricot::Elements size is greater than 1.
     def search_and_convert(path)
@@ -343,43 +344,43 @@ module Amazon
     end
 
     # Get the text value of the given path, leave empty to retrieve current element value.
-    def get(path='')
+    def get(path="")
       Element.get(@element, path)
     end
-    
+  
     # Get the unescaped HTML text of the given path.
-    def get_unescaped(path='')
+    def get_unescaped(path="")
       Element.get_unescaped(@element, path)
     end
-    
+  
     # Get the array values of the given path.
-    def get_array(path='')
+    def get_array(path="")
       Element.get_array(@element, path)
     end
 
     # Get the children element text values in hash format with the element names as the hash keys.
-    def get_hash(path='')
+    def get_hash(path="")
       Element.get_hash(@element, path)
     end
 
     # Similar to #get, except an element object must be passed-in.
-    def self.get(element, path='')
+    def self.get(element, path="")
       return unless element
       result = element.at(path)
       result = result.inner_html if result
       result
     end
-    
+  
     # Similar to #get_unescaped, except an element object must be passed-in.    
-    def self.get_unescaped(element, path='')
+    def self.get_unescaped(element, path="")
       result = get(element, path)
       CGI::unescapeHTML(result) if result
     end
 
     # Similar to #get_array, except an element object must be passed-in.
-    def self.get_array(element, path='')
+    def self.get_array(element, path="")
       return unless element
-      
+    
       result = element/path
       if (result.is_a? Hpricot::Elements) || (result.is_a? Array)
         parsed_result = []
@@ -393,9 +394,9 @@ module Amazon
     end
 
     # Similar to #get_hash, except an element object must be passed-in.
-    def self.get_hash(element, path='')
+    def self.get_hash(element, path="")
       return unless element
-    
+  
       result = element.at(path)
       if result
         hash = {}
@@ -406,7 +407,7 @@ module Amazon
         hash
       end
     end
-    
+  
     def to_s
       elem.to_s if elem
     end
