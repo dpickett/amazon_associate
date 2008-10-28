@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
-require "ruby-debug"
 class Amazon::CartTest < Test::Unit::TestCase
   
   # create a cart to store cart_id and hmac for add, get, modify, and clear tests
@@ -31,7 +30,7 @@ class Amazon::CartTest < Test::Unit::TestCase
     cart_item_id = resp.doc.get_elements_by_tag_name("cartitemid").inner_text
     resp = Amazon::Ecs.cart_modify(cart_item_id, @asin, @cart_id, @hmac, 2)
     item = resp.first_item
-    debugger
+
     assert resp.is_valid_request?
     assert_equal "2", item.get("quantity")
     assert_not_nil resp.doc.get_elements_by_tag_name("purchaseurl").inner_text
