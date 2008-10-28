@@ -28,7 +28,7 @@ class Amazon::CartTest < Test::Unit::TestCase
   def test_cart_modify
     resp = Amazon::Ecs.cart_get(@cart_id, @hmac)
     cart_item_id = resp.doc.get_elements_by_tag_name("cartitemid").inner_text
-    resp = Amazon::Ecs.cart_modify(cart_item_id, @asin, @cart_id, @hmac, 2)
+    resp = Amazon::Ecs.cart_modify(cart_item_id, @cart_id, @hmac, 2)
     item = resp.first_item
 
     assert resp.is_valid_request?
