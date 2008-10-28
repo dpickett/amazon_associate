@@ -4,6 +4,7 @@ class Amazon::EcsTest < Test::Unit::TestCase
   def setup
     Amazon::Ecs.configure do |options|
       options[:response_group] = "Large"
+      
     end
   end
   ## Test item_search
