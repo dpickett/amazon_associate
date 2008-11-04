@@ -7,6 +7,7 @@ class Amazon::EcsTest < Test::Unit::TestCase
       
     end
   end
+  
   ## Test item_search
   def test_item_search
     resp = Amazon::Ecs.item_search("ruby")
