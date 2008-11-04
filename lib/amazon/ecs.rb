@@ -212,15 +212,23 @@ module Amazon
     def self.send_request(opts)
       opts = self.options.merge(opts) if self.options
       request_url = prepare_url(opts)
-      log "Request URL: #{request_url}"
-    
-      res = Net::HTTP.get_response(URI::parse(request_url))
-      unless res.kind_of? Net::HTTPSuccess
-        raise Amazon::RequestError, "HTTP Response: #{res.code} #{res.message}"
+      response = nil
+
+      if caching_enabled?
+        res = Amazon::CacheFactory.get(request_url, self.options) 
+        response = Response.new(res, request_url) unless res.nil?
       end
       
-      response = Response.new(res.body, request_url)
-      cache_response(request_url, response, self.options) if caching_enabled?
+      if !caching_enabled? || response.nil?
+        log "Request URL: #{request_url}"
+        res = Net::HTTP.get_response(URI::parse(request_url))
+        unless res.kind_of? Net::HTTPSuccess
+          raise Amazon::RequestError, "HTTP Response: #{res.code} #{res.message}"
+        end
+        response = Response.new(res.body, request_url)
+        cache_response(request_url, response, self.options) if caching_enabled?
+      end
+        
       response
     end
   

@@ -11,6 +11,10 @@ class Amazon::CacheFactory
     strategy_class_hash[options[:caching_strategy]].validate(options)
   end
   
+  def self.get(request, options)
+    strategy_class_hash[options[:caching_strategy]].get(request, options)
+  end
+  
   private
   def self.strategy_class_hash
     {
