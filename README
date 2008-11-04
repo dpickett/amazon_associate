@@ -14,6 +14,10 @@ instead you just need to change the element path.
 
 Version: 0.5.4
 
+== WANTS
+ * caching
+ * instance based refactoring (singletons are not ideal here)
+ 
 == INSTALLATION
 
   $ gem install amazon-ecs
@@ -90,4 +94,4 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 
 (The MIT License)
 
-Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
+Copyright (c) 2008 Dan Pickett, Enlight Solutions, Inc.
