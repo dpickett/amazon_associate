@@ -9,6 +9,10 @@ module Amazon::CachingStrategy
       cached_file.close
     end
     
+    def self.find_in_cache(request)
+      
+    end
+    
     def self.validate(options)
       #check for required options
       if options[:caching_options].nil?
