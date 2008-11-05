@@ -1,3 +1,7 @@
+* separated the classes in ecs.rb
+* filesystem caching available
+* more test coverage
+
 0.5.4 2008-10-21
 * include Chris Martin's patches
 * rename Gem to match Amazon's new name for ECS - Amazon Associates API

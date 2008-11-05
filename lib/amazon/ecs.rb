@@ -177,10 +177,10 @@ module Amazon
   
     def self.configure(&proc)
       raise ArgumentError, "Block is required." unless block_given?
-      yield @@options
       
+      yield @@options
       if !@@options[:caching_strategy].nil?
-        CacheFactory.validate(@@options)
+        @@options.merge!(CacheFactory.initialize_options(@@options))
       end
     end
   
@@ -215,7 +215,9 @@ module Amazon
       response = nil
 
       if caching_enabled?
-        res = Amazon::CacheFactory.get(request_url, self.options) 
+        Amazon::CacheFactory.sweep(self.options[:caching_strategy])
+        
+        res = Amazon::CacheFactory.get(request_url, self.options[:caching_strategy]) 
         response = Response.new(res, request_url) unless res.nil?
       end
       
@@ -226,7 +228,7 @@ module Amazon
           raise Amazon::RequestError, "HTTP Response: #{res.code} #{res.message}"
         end
         response = Response.new(res.body, request_url)
-        cache_response(request_url, response, self.options) if caching_enabled?
+        cache_response(request_url, response, self.options[:caching_strategy]) if caching_enabled?
       end
         
       response
