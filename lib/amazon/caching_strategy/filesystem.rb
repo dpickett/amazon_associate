@@ -1,4 +1,5 @@
 require "fileutils"
+require "find"
 
 module Amazon::CachingStrategy
   class Filesystem < Amazon::CachingStrategy::Base
@@ -37,10 +38,12 @@ module Amazon::CachingStrategy
         raise Amazon::ConfigurationError, "You must specify caching options for filesystem caching: :cache_path is required"
       end
       
-      @@disk_quota = options[:caching_options][:disk_quota]
-      @@sweep_frequency = options[:caching_options][:sweep_frequency]
-      @@cache_path = options[:caching_options][:cache_path]
+      #default disk quota to 200MB
+      @@disk_quota = options[:caching_options][:disk_quota] || DEFAULT_DISK_QUOTA
       
+      @@sweep_frequency = options[:caching_options][:sweep_frequency] || DEFAULT_SWEEP_FREQUENCY
+      
+      @@cache_path = options[:caching_options][:cache_path]
       
       if @@cache_path.nil? || !File.directory?(@@cache_path)
         raise Amazon::ConfigurationError, "You must specify a cache path for filesystem caching"
@@ -54,11 +57,11 @@ module Amazon::CachingStrategy
     end
     
     def self.disk_quota
-      @@disk_quota || DEFAULT_DISK_QUOTA
+      @@disk_quota
     end
     
     def self.sweep_frequency
-      @@sweep_frequency || DEFAULT_SWEEP_FREQUENCY
+      @@sweep_frequency
     end
     
     def self.cache_path
@@ -67,7 +70,7 @@ module Amazon::CachingStrategy
     
     private
     def self.perform_sweep
-      #todo: implement
+      FileUtils.rm_rf(Dir.glob("#{@@cache_path}/*"))
       
       self.timestamp_sweep_performance
     end
@@ -91,11 +94,19 @@ module Amazon::CachingStrategy
     end
     
     def self.disk_quota_exceeded?
-      #todo: implement
+      cache_size > @@disk_quota
     end
     
     def self.timestamp_filename
       File.join(self.cache_path, ".amz_timestamp")
+    end
+    
+    def self.cache_size
+      size = 0
+      Find.find(@@cache_path) do|f|
+         size += File.size(f) if File.file?(f)
+      end
+      size / 1000000
     end
   end
   

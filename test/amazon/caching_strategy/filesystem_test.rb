@@ -159,6 +159,21 @@ class Amazon::CachingStrategy::FilesystemTest < Test::Unit::TestCase
       assert FileTest.exists?(File.join(@@cache_path, ".amz_timestamp"))
     end
     
+    should "purge the cache when performing a sweep" do
+      (0..9).each do |n| 
+        test = File.open(File.join(@@cache_path, "test_file_#{n}"), "w")
+        test.puts Time.now
+        test.close
+      end
+      
+      Amazon::CachingStrategy::Filesystem.expects(:sweep_time_expired?).once.returns(true)
+      do_request
+      
+      (0..9).each do |n|
+        assert !FileTest.exists?(File.join(@@cache_path, "test_file_#{n}"))
+      end
+    end
+    
   end
 
   protected

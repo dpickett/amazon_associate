@@ -7,6 +7,7 @@ module FilesystemTestHelper
     Amazon::Ecs.configure do |options|
       options[:caching_strategy] = :filesystem
       options[:caching_options] = {:cache_path => @@cache_path}
+      options[:disk_quota] = 200
     end
   end
 
