@@ -12,10 +12,9 @@ If in the future, there is a change in REST XML output structure,
 no changes will be required on <tt>amazon-ecs</tt> library, 
 instead you just need to change the element path.
 
-Version: 0.5.4
+Version: 0.6
 
 == WANTS
- * caching
  * instance based refactoring (singletons are not ideal here)
  
 == INSTALLATION
@@ -84,6 +83,18 @@ http://docs.amazonwebservices.com/AWSEcommerceService/2006-09-13/
 
 To get a sample of Amazon REST response XML output, use AWSZone.com scratch pad:
 http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
+
+== CACHING
+
+  Filesystem caching is now available.
+  
+  Amazon::Ecs.options = {:aWS_access_key_id => [your developer token], :caching_strategy => :filesystem, 
+    :caching_options => {:disk_quota => 200, :cache_path => <path where you want to store requests>, :sweep_frequency => 4}
+  }
+  
+  The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
+  
+  Every request will be stored in the cache path. On every request, Amazon::Ecs will check for the presence of the cached file before querying Amazon directly.
 
 == LINKS
 
