@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.date = %q{2008-11-10}
   s.email = ["dpickett@enlightsolutions.com", "herryanto@pluitsolutions.com"]
   s.extra_rdoc_files = ["README", "CHANGELOG"]
-  s.files = ["test/amazon/browse_node_lookup_test.rb", "test/amazon/cache_test.rb", "test/amazon/caching_strategy/filesystem_test.rb", "test/amazon/cart_test.rb", "test/amazon/ecs_test.rb", "README", "CHANGELOG"]
+  s.files = ["lib/amazon/cache_factory.rb", "lib/amazon/caching_strategy/base.rb", "lib/amazon/caching_strategy/filesystem.rb", "lib/amazon/caching_strategy.rb", "lib/amazon/configuration_error.rb", "lib/amazon/ecs.rb", "lib/amazon/element.rb", "lib/amazon/request_error.rb", "lib/amazon/response.rb", "lib/amazon.rb", "test/amazon/browse_node_lookup_test.rb", "test/amazon/cache_test.rb", "test/amazon/caching_strategy/filesystem_test.rb", "test/amazon/cart_test.rb", "test/amazon/ecs_test.rb", "README", "CHANGELOG"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/dpickett/ruby_amazon_associates/tree/master}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--main", "README.textile"]
