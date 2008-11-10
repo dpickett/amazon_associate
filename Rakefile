@@ -31,8 +31,8 @@ spec = Gem::Specification.new do |s|
 
   s.specification_version = 2 if s.respond_to? :specification_version=
   
-  s.authors = ["Herryanto Siatono", "Dan Pickett"]
-  s.email = ["herryanto@pluitsolutions.com, dpickett@enlightsolutions.com"]
+  s.authors = ["Dan Pickett", "Herryanto Siatono"]
+  s.email = ["dpickett@enlightsolutions.com", "herryanto@pluitsolutions.com"]
   s.homepage = "http://github.com/dpickett/ruby_amazon_associates/tree/master"
   s.platform = Gem::Platform::RUBY
   s.summary = "Generic Amazon Associates Web Service (Formerly ECS) REST API. Supports ECS 4.0."
