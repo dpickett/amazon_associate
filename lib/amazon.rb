@@ -1,3 +1,5 @@
+$:.unshift(File.dirname(__FILE__))
+
 require "amazon/ecs"
 require "amazon/element"
 require "amazon/response"
