@@ -4,7 +4,7 @@ module FilesystemTestHelper
   protected
   def get_valid_caching_options
     #configure Amazon library for filesystem caching
-    Amazon::Ecs.configure do |options|
+    AmazonAssociate::Request.configure do |options|
       options[:caching_strategy] = :filesystem
       options[:caching_options] = {:cache_path => @@cache_path}
       options[:disk_quota] = 200
@@ -13,7 +13,7 @@ module FilesystemTestHelper
 
   def destroy_caching_options
     #reset caching to off
-    Amazon::Ecs.configure do |options|
+    AmazonAssociate::Request.configure do |options|
       options[:caching_strategy] = nil
       options[:caching_options] = nil
     end

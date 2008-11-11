@@ -1,10 +1,10 @@
-== amazon-ecs
+== amazon-associate
 
 Generic Amazon E-commerce REST API using Hpricot with configurable 
 default options and method call options. Uses Response and 
 Element wrapper classes for easy access to REST XML output. It supports ECS 4.0.
 
-It is generic, so you can easily extend <tt>Amazon::Ecs</tt> to support 
+It is generic, so you can easily extend <tt>AmazonAssociate::Request</tt> to support 
 other not implemented REST operations; and it is also generic because it just wraps around
 Hpricot element object, instead of providing one-to-one object/attributes to XML elements map.
 
@@ -12,24 +12,24 @@ If in the future, there is a change in REST XML output structure,
 no changes will be required on <tt>amazon-ecs</tt> library, 
 instead you just need to change the element path.
 
-Version: 0.6
+Version: 0.6.1
 
 == WANTS
  * instance based refactoring (singletons are not ideal here)
  
 == INSTALLATION
 
-  $ gem install amazon-ecs
+  $ gem install dpickett-amazon_associate
 
 == EXAMPLE
 
-    require 'amazon/ecs'
+    require 'amazon_associate'
 	
     # set the default options; options will be camelized and converted to REST request parameters.
-    Amazon::Ecs.options = {:aWS_access_key_id => [your developer token]}
+    AmazonAssociate::Request.options = {:aWS_access_key_id => [your developer token]}
 
     # options provided on method call will merge with the default options
-    res = Amazon::Ecs.item_search('ruby', {:response_group => 'Medium', :sort => 'salesrank'})
+    res = AmazonAssociate::Request.item_search('ruby', {:response_group => 'Medium', :sort => 'salesrank'})
 
     # some common response object methods
     res.is_valid_request?     # return true if request is valid
@@ -39,13 +39,13 @@ Version: 0.6
     res.total_results         # return total results
     res.item_page             # return current page no if :item_page option is provided
 
-    # traverse through each item (Amazon::Element)
+    # traverse through each item (AmazonAssociate::Element)
     res.items.each do |item|
       # retrieve string value using XML path
       item.get('asin')
       item.get('itemattributes/title')
 
-      # or return Amazon::Element instance
+      # or return AmazonAssociate::Element instance
       atts = item.search_and_convert('itemattributes')
       atts.get('title')
   
@@ -62,23 +62,23 @@ Version: 0.6
       # traverse through Hpricot elements
       reviews.each do |review|
         # Getting hash value out of Hpricot element
-        Amazon::Element.get_hash(review) # [:source => ..., :content ==> ...]
+        AmazonAssociate::Element.get_hash(review) # [:source => ..., :content ==> ...]
     
         # Or to get unescaped HTML values
-        Amazon::Element.get_unescaped(review, 'source')
-        Amazon::Element.get_unescaped(review, 'content')
+        AmazonAssociate::Element.get_unescaped(review, 'source')
+        AmazonAssociate::Element.get_unescaped(review, 'content')
         
         # Or this way
-        el = Amazon::Element.new(review)
+        el = AmazonAssociate::Element.new(review)
         el.get_unescaped('source')
         el.get_unescaped('content')
       end
       
-      # returns Amazon::Element instead of string
+      # returns AmazonAssociate::Element instead of string
       item.search_and_convert('itemattributes').
     end
 
-Refer to Amazon ECS documentation for more information on Amazon REST request parameters and XML output:
+Refer to Amazon Associate's documentation for more information on Amazon REST request parameters and XML output:
 http://docs.amazonwebservices.com/AWSEcommerceService/2006-09-13/
 
 To get a sample of Amazon REST response XML output, use AWSZone.com scratch pad:
@@ -88,13 +88,13 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 
   Filesystem caching is now available.
   
-  Amazon::Ecs.options = {:aWS_access_key_id => [your developer token], :caching_strategy => :filesystem, 
+  AmazonAssociate::Request.options = {:aWS_access_key_id => [your developer token], :caching_strategy => :filesystem, 
     :caching_options => {:disk_quota => 200, :cache_path => <path where you want to store requests>, :sweep_frequency => 4}
   }
   
   The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
   
-  Every request will be stored in the cache path. On every request, Amazon::Ecs will check for the presence of the cached file before querying Amazon directly.
+  Every request will be stored in the cache path. On every request, AmazonAssociate::Request will check for the presence of the cached file before querying Amazon directly.
 
 == LINKS
 

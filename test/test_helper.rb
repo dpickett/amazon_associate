@@ -6,10 +6,10 @@ require "mocha"
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) , '..', 'lib'))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) , 'utilities'))
 require "filesystem_test_helper"
-require 'amazon'
+require 'amazon_associate'
 
 
-Amazon::Ecs.configure do |options|
+AmazonAssociate::Request.configure do |options|
   options[:aWS_access_key_id] = ""
   
   #raise exception if user has not entered their access key

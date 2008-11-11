@@ -8,7 +8,7 @@ require "date"
 desc "Run unit tests."
 task :default => :test
 
-desc "Test the ruby_amazon_associates library."
+desc "Test the amazon_associate library."
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
   t.test_files = FileList["test/**/*test.rb"]
@@ -19,29 +19,29 @@ end
 desc "Generate documentation for the factory_girl plugin."
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = "rdoc"
-  rdoc.title = "ruby_amazon_associates"
+  rdoc.title = "amazon_associate"
   rdoc.options << "--line-numbers" << "--inline-source" << "--main" << "README.textile"
   rdoc.rdoc_files.include("README", "CHANGELOG")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
 
 spec = Gem::Specification.new do |s| 
-  s.name = "ruby_amazon_associates"
-  s.version = "0.6"
+  s.name = "amazon_associate"
+  s.version = "0.6.1"
 
   s.specification_version = 2 if s.respond_to? :specification_version=
   
   s.authors = ["Dan Pickett", "Herryanto Siatono"]
   s.email = ["dpickett@enlightsolutions.com", "herryanto@pluitsolutions.com"]
-  s.homepage = "http://github.com/dpickett/ruby_amazon_associates/tree/master"
+  s.homepage = "http://github.com/dpickett/amazon_associate/tree/master"
   s.platform = Gem::Platform::RUBY
   s.summary = "Generic Amazon Associates Web Service (Formerly ECS) REST API. Supports ECS 4.0."
   s.has_rdoc = true
   s.rdoc_options = ["--line-numbers", "--inline-source", "--main", "README"]
   s.require_path = 'lib'
-  s.autorequire = "amazon"
+  s.autorequire = 'amazon_associate'
   s.test_files = FileList["test/**/*test.rb"].to_a
-  s.files = FileList["lib/**/*.rb"].to_a
+  s.files = FileList["lib/**/*"].to_a
   s.has_rdoc = true
   s.extra_rdoc_files = ["README", "CHANGELOG"]
   s.add_dependency("hpricot", ">= 0.6")
