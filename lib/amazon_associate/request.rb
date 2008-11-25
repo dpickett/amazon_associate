@@ -87,7 +87,6 @@ module AmazonAssociate
     # Performs BrowseNodeLookup request, defaults to TopSellers ResponseGroup
     def self.browse_node_lookup(browse_node_id, opts = {})
       opts = self.options.merge(opts) if self.options
-      opts[:response_group] = opts[:response_group] || "TopSellers"
       opts[:operation] = "BrowseNodeLookup"
       opts[:browse_node_id] = browse_node_id
     

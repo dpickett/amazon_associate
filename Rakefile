@@ -27,7 +27,7 @@ end
 
 spec = Gem::Specification.new do |s| 
   s.name = "amazon_associate"
-  s.version = "0.6.1"
+  s.version = "0.6.2"
 
   s.specification_version = 2 if s.respond_to? :specification_version=
   

@@ -4,7 +4,7 @@ class AmazonAssociate::BrowseNodeLookupTest < Test::Unit::TestCase
   
   ## Test browse_node_lookup
   def test_browse_node_lookup
-    resp = AmazonAssociate::Request.browse_node_lookup("5")
+    resp = AmazonAssociate::Request.browse_node_lookup("5", :response_group => "TopSellers")
     assert resp.is_valid_request?
     browse_node_tags = resp.doc.get_elements_by_tag_name("browsenodeid")
     browse_node_tags.each { |node| assert_equal("5", node.inner_text) }
