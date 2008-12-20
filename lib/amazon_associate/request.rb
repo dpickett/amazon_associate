@@ -97,28 +97,45 @@ module AmazonAssociate
     # Item.ASIN.Quantity defaults to 1, unless otherwise specified in _opts_
   
     # Creates remote shopping cart containing _asin_
-    def self.cart_create(asin, opts = {})
+    def self.cart_create(items, opts = {})
       opts = self.options.merge(opts) if self.options
       opts[:operation] = "CartCreate"
-      opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
-      opts["Item.#{asin}.ASIN"] = asin
+      
+      if items.is_a?(String)
+        opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
+        opts["Item.#{asin}.ASIN"] = asin
+      else
+        items.each do |item|
+          item[:offer_listing_id].blank? ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
+          opts["Item.#{item[:asin]}.Quantity"] = item[:quantity] || 1
+        end
+      end
   
       self.send_request(opts)
     end
   
-    # Adds item to remote shopping cart
-    def self.cart_add(asin, cart_id, hmac, opts = {})
+    # Adds items to remote shopping cart
+    def self.cart_add(items, cart_id, hmac, opts = {})
       opts = self.options.merge(opts) if self.options
       opts[:operation] = "CartAdd"
-      opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
-      opts["Item.#{asin}.ASIN"] = asin
+      
+      if items.is_a?(String)
+        opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
+        opts["Item.#{asin}.ASIN"] = asin
+      else
+        items.each do |item|
+          item[:offer_listing_id].blank? ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
+          opts["Item.#{item[:asin]}.Quantity"] = item[:quantity] || 1
+        end
+      end
+      
       opts[:cart_id] = cart_id
       opts[:hMAC] = hmac
   
       self.send_request(opts)
     end
   
-    # Adds item to remote shopping cart
+    # Retrieve a remote shopping cart
     def self.cart_get(cart_id, hmac, opts = {})
       opts = self.options.merge(opts) if self.options
       opts[:operation] = "CartGet"
