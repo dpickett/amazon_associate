@@ -102,11 +102,12 @@ module AmazonAssociate
       opts[:operation] = "CartCreate"
       
       if items.is_a?(String)
+        asin = items
         opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
         opts["Item.#{asin}.ASIN"] = asin
       else
         items.each do |item|
-          item[:offer_listing_id].blank? ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
+          (item[:offer_listing_id].nil? || item[:offer_listing_id].empty?) ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
           opts["Item.#{item[:asin]}.Quantity"] = item[:quantity] || 1
         end
       end
@@ -120,11 +121,12 @@ module AmazonAssociate
       opts[:operation] = "CartAdd"
       
       if items.is_a?(String)
+        asin = items
         opts["Item.#{asin}.Quantity"] = opts[:quantity] || 1
         opts["Item.#{asin}.ASIN"] = asin
       else
         items.each do |item|
-          item[:offer_listing_id].blank? ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
+          (item[:offer_listing_id].nil? || item[:offer_listing_id].empty?) ? opts["Item.#{item[:asin]}.ASIN"] = item[:asin] : opts["Item.#{item[:asin]}.OfferListingId"] = item[:offer_listing_id]
           opts["Item.#{item[:asin]}.Quantity"] = item[:quantity] || 1
         end
       end
