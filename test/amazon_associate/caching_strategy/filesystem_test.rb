@@ -88,6 +88,12 @@ class AmazonAssociate::CachingStrategy::FilesystemTest < Test::Unit::TestCase
       assert FileTest.exists?(File.join(@@cache_path + @filename[0..2], @filename))
       assert_equal @resp.doc.to_s, File.read(File.join(@@cache_path + @filename[0..2], @filename)).chomp
     end
+
+    should "not send cache parameters in the request" do
+      [:caching_strategy].each do |param|
+        assert_no_match /#{param.to_s}/, @resp.request_url
+      end
+    end
   end
   
   context "getting a cached request" do

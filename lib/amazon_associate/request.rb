@@ -274,6 +274,7 @@ module AmazonAssociate
         qs = ""
         opts.each {|k,v|
           next unless v
+          next if [:caching_options, :caching_strategy].include?(k)
           v = v.join(",") if v.is_a? Array
           qs << "&#{camelize(k.to_s)}=#{URI.encode(v.to_s)}"
         }
