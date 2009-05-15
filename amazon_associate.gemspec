@@ -14,11 +14,13 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".autotest",
+     ".gitignore",
      ".project",
      "CHANGELOG",
      "MIT-LICENSE",
      "README",
      "Rakefile",
+     "VERSION.yml",
      "amazon_associate.gemspec",
      "lib/amazon_associate.rb",
      "lib/amazon_associate/cache_factory.rb",
