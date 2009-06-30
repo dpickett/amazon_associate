@@ -15,7 +15,7 @@ instead you just need to change the element path.
 Version: 0.6.1
 
 == WANTS
- * instance based refactoring (singletons are not ideal here)
+* instance based refactoring (singletons are not ideal here)
  
 == INSTALLATION
 
@@ -88,7 +88,7 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 
 == CACHING
 
-  Filesystem caching is now available.
+Filesystem caching is now available.
   
   AmazonAssociate::Request.configure do |options| 
     options[:aWS_access_key_id] = [your developer token]
@@ -100,9 +100,9 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
     }
   end
   
-  The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
+The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
   
-  Every request will be stored in the cache path. On every request, AmazonAssociate::Request will check for the presence of the cached file before querying Amazon directly.
+Every request will be stored in the cache path. On every request, AmazonAssociate::Request will check for the presence of the cached file before querying Amazon directly.
 
 == LINKS
 

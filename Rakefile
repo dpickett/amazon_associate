@@ -16,12 +16,12 @@ Rake::TestTask.new(:test) do |t|
   t.warning = true
 end
 
-desc "Generate documentation for the factory_girl plugin."
+desc "Generate documentation for the amazon_associate plugin."
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = "rdoc"
   rdoc.title = "amazon_associate"
   rdoc.options << "--line-numbers" << "--inline-source" << "--main" << "README.textile"
-  rdoc.rdoc_files.include("README", "CHANGELOG")
+  rdoc.rdoc_files.include("README.rdoc", "CHANGELOG")
   rdoc.rdoc_files.include("lib/**/*.rb")
 end
 
@@ -32,7 +32,7 @@ begin
     gemspec.summary = "Amazon Associates API Interface using Hpricot"
     gemspec.email = "dpickett@enlightsolutions.com"
     gemspec.homepage = "http://github.com/dpickett/amazon_associate"
-    gemspec.description = "TODO"
+    gemspec.description = "interfaces with Amazon Associate's API using Hpricot"
     gemspec.authors = ["Dan Pickett"]
   end
 rescue LoadError

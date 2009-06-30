@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{TODO}
   s.email = %q{dpickett@enlightsolutions.com}
   s.extra_rdoc_files = [
-    "README"
+    "README.rdoc"
   ]
   s.files = [
     ".autotest",
