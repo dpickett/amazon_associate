@@ -9,6 +9,7 @@ module AmazonAssociate
       unless self.strategy_class_hash.keys.include?(options[:caching_strategy])
         raise AmazonAssociate::ConfigurationError, "Invalid caching strategy" 
       end
+
       strategy_class_hash[options[:caching_strategy]].initialize_options(options)
     end
   

@@ -26,7 +26,9 @@ Version: 0.6.1
     require 'amazon_associate'
 	
     # set the default options; options will be camelized and converted to REST request parameters.
-    AmazonAssociate::Request.options = {:aWS_access_key_id => [your developer token]}
+    AmazonAssociate::Request.configure do |options|
+      options[:aWS_access_key_id] = [your developer token]
+    end
 
     # options provided on method call will merge with the default options
     res = AmazonAssociate::Request.item_search('ruby', {:response_group => 'Medium', :sort => 'salesrank'})
@@ -88,9 +90,15 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 
   Filesystem caching is now available.
   
-  AmazonAssociate::Request.options = {:aWS_access_key_id => [your developer token], :caching_strategy => :filesystem, 
-    :caching_options => {:disk_quota => 200, :cache_path => <path where you want to store requests>, :sweep_frequency => 4}
-  }
+  AmazonAssociate::Request.configure do |options| 
+    options[:aWS_access_key_id] = [your developer token]
+    options[:caching_strategy] = :filesystem
+    options[:caching_options] = {
+      :disk_quota      => 200, 
+      :cache_path      => <path where you want to store requests>, 
+      :sweep_frequency => 4
+    }
+  end
   
   The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
   
@@ -99,7 +107,6 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 == LINKS
 
 * http://amazon-ecs.rubyforge.org
-* http://www.pluitsolutions.com/amazon-ecs
 
 == LICENSE
 

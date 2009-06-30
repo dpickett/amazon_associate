@@ -29,6 +29,5 @@ class AmazonAssociate::CacheTest < Test::Unit::TestCase
       end
     end
     
-    
   end
 end
