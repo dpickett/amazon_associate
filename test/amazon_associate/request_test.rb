@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + "/../test_helper"
 
 class AmazonAssociate::RequestTest < Test::Unit::TestCase
   def setup
+    sleep(1)
     AmazonAssociate::Request.configure do |options|
       options[:response_group] = "Large"
-      
     end
   end
   

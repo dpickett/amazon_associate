@@ -4,6 +4,7 @@ class AmazonAssociate::CartTest < Test::Unit::TestCase
   
   # create a cart to store cart_id and hmac for add, get, modify, and clear tests
   def setup
+    sleep(1)
     @asin = "0672328844"
     resp = AmazonAssociate::Request.cart_create(@asin)
     @cart_id = resp.doc.get_elements_by_tag_name("cartid").inner_text
