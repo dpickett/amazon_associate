@@ -27,6 +27,15 @@ class AmazonAssociate::CachingStrategy::FilesystemTest < Test::Unit::TestCase
         end
       end
     end
+
+    should "raise an exception when a cache_path is nil" do
+      assert_raise(AmazonAssociate::ConfigurationError) do
+        AmazonAssociate::Request.configure do |options|
+          options[:caching_strategy] = :filesystem
+          options[:caching_options] = {}
+        end
+      end
+    end
     
     should "set default values for disk_quota and sweep_frequency" do
       AmazonAssociate::Request.configure do |options|
