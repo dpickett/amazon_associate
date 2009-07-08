@@ -9,7 +9,7 @@ rescue LoadError
 end
 
 #--
-# Copyright (c) 2006 Herryanto Siatono, Pluit Solutions
+# Copyright (c) 2009 Dan Pickett, Enlight Solutions
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
