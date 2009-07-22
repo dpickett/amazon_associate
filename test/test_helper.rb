@@ -2,6 +2,7 @@ require "rubygems"
 require "test/unit"
 require "shoulda"
 require "mocha"
+require "fake_web"
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) , '..', 'lib'))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__) , 'utilities'))
@@ -11,6 +12,7 @@ require 'amazon_associate'
 
 AmazonAssociate::Request.configure do |options|
   options[:aWS_access_key_id] = ENV["AWS_ACCESS_KEY"] || ""
+  options[:secret_key] = ENV["AWS_SECRET_KEY"] || ""
   
   #raise exception if user has not entered their access key
   if options[:aWS_access_key_id] == ""

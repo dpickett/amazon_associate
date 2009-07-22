@@ -1,5 +1,9 @@
 $:.unshift(File.dirname(__FILE__))
 
+require "base64"
+require "hmac-sha2"
+require "digest/sha2"
+
 require "amazon_associate/request"
 require "amazon_associate/element"
 require "amazon_associate/response"
