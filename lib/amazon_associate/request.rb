@@ -328,7 +328,7 @@ module AmazonAssociate
 
       def self.sort_parameters(opts)
         key_value_strings = []
-        opts.sort{|a, b| a[0].to_s.downcase <=> b[0].to_s.downcase }
+        opts.sort {|a, b| camelize(a) <=> camelize(b) }
       end
 
       def self.sign_string(string_to_sign)
