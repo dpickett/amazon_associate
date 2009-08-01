@@ -33,12 +33,12 @@ end
 module AmazonAssociate
   class Request
     
-    SERVICE_URLS = {:us => "http://webservices.amazon.com/onca/xml?Service=AWSECommerceService",
-        :uk => "http://webservices.amazon.co.uk/onca/xml?Service=AWSECommerceService",
-        :ca => "http://webservices.amazon.ca/onca/xml?Service=AWSECommerceService",
-        :de => "http://webservices.amazon.de/onca/xml?Service=AWSECommerceService",
-        :jp => "http://webservices.amazon.co.jp/onca/xml?Service=AWSECommerceService",
-        :fr => "http://webservices.amazon.fr/onca/xml?Service=AWSECommerceService"
+    SERVICE_URLS = {:us => "http://webservices.amazon.com",
+        :uk => "http://webservices.amazon.co.uk",
+        :ca => "http://webservices.amazon.ca",
+        :de => "http://webservices.amazon.de",
+        :jp => "http://webservices.amazon.co.jp",
+        :fr => "http://webservices.amazon.fr"
     }
   
     # The sort types available to each product search index.
@@ -229,29 +229,38 @@ module AmazonAssociate
     # Generic send request to ECS REST service. You have to specify the :operation parameter.
     def self.send_request(opts)
       opts = self.options.merge(opts) if self.options
-      request_url = prepare_url(opts)
+      unsigned_url = prepare_unsigned_url(opts)
       response = nil
 
       if caching_enabled?
         AmazonAssociate::CacheFactory.sweep(self.options[:caching_strategy])
         
-        res = AmazonAssociate::CacheFactory.get(request_url, self.options[:caching_strategy]) 
-        response = Response.new(res, request_url) unless res.nil?
+        res = AmazonAssociate::CacheFactory.get(unsigned_url, self.options[:caching_strategy]) 
+        response = Response.new(res, unsigned_url) unless res.nil?
       end
       
       if !caching_enabled? || response.nil?
+        request_url = prepare_signed_url(opts)
         log "Request URL: #{request_url}"
         res = Net::HTTP.get_response(URI::parse(request_url))
+
         unless res.kind_of? Net::HTTPSuccess
           raise AmazonAssociate::RequestError, "HTTP Response: #{res.code} #{res.message}"
         end
+
         response = Response.new(res.body, request_url)
-        cache_response(request_url, response, self.options[:caching_strategy]) if caching_enabled?
+        response.unsigned_url = unsigned_url
+
+        if caching_enabled?
+          cache_response(unsigned_url, response, self.options[:caching_strategy]) 
+        end
       end
         
       response
     end
   
+    attr_accessor :request_url, :unsigned_url
+
     protected
       def self.log(s)
         return unless self.debug
@@ -264,21 +273,70 @@ module AmazonAssociate
         end
       end
     
-    private 
-      def self.prepare_url(opts)
+    private
+      def self.get_service_url(opts)
         country = opts.delete(:country)
         country = (country.nil?) ? "us" : country
-        request_url = SERVICE_URLS[country.to_sym]
-        raise AmazonAssociate::RequestError, "Invalid country \"#{country}\"" unless request_url
+        url = SERVICE_URLS[country.to_sym]
+
+        raise AmazonAssociate::RequestError, "Invalid country \"#{country}\"" unless url
+        url
+      end 
+
+      def self.prepare_unsigned_url(opts)
+        url = get_service_url(opts) + "/onca/xml"
       
         qs = ""
         opts.each {|k,v|
           next unless v
-          next if [:caching_options, :caching_strategy].include?(k)
+          next if [:caching_options, :caching_strategy, :secret_key].include?(k)
           v = v.join(",") if v.is_a? Array
           qs << "&#{camelize(k.to_s)}=#{URI.encode(v.to_s)}"
         }
-        "#{request_url}#{qs}"
+
+        @unsigned_url = "#{url}#{qs}"
+      end
+
+      def self.prepare_signed_url(opts)
+        url = get_service_url(opts) + "/onca/xml"
+        
+        unencoded_key_value_strings = []
+        encoded_key_value_strings = []
+        opts[:timestamp] = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S") + ".000Z"
+        opts[:service] = "AWSECommerceService"
+        opts[:version] = "2009-01-01"
+        sort_parameters(opts).each do |p|
+          next if p[1].nil?
+          next if [:caching_options, :caching_strategy, :secret_key].include?(p[0])
+
+
+          encoded_value = CGI.escape(p[1].to_s)
+          
+          encoded_key_value_strings << camelize(p[0].to_s ) + "=" + encoded_value
+        end
+
+        string_to_sign = 
+"GET
+#{get_service_url(opts).gsub("http://", "")}
+/onca/xml
+#{encoded_key_value_strings.join("&")}"
+
+        signature = sign_string(string_to_sign)
+        encoded_key_value_strings << "Signature=" + signature
+
+        "#{url}?#{encoded_key_value_strings.join("&")}"
+      end
+
+      def self.sort_parameters(opts)
+        key_value_strings = []
+        opts.sort {|a, b| camelize(a) <=> camelize(b) }
+      end
+
+      def self.sign_string(string_to_sign)
+        sha1 = HMAC::SHA256.digest(self.options[:secret_key], string_to_sign)
+
+        #Base64 encoding adds a linefeed to the end of the string so chop the last character!
+        CGI.escape(Base64.encode64(sha1).chomp)
       end
     
       def self.camelize(s)

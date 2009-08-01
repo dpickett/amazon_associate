@@ -2,7 +2,7 @@ module AmazonAssociate
   # Response object returned after a REST call to Amazon service.
   class Response
     
-    attr_accessor :request_url
+    attr_accessor :request_url, :unsigned_url
     # XML input is in string format
     def initialize(xml, request_url)
       @doc = Hpricot(xml)
