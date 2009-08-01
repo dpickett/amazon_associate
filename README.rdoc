@@ -12,6 +12,9 @@ If in the future, there is a change in REST XML output structure,
 no changes will be required on <tt>amazon-ecs</tt> library, 
 instead you just need to change the element path.
 
+NOTE: You must now specify a secret key to support request signing as 
+required by Amazon.
+
 Version: 0.6.1
 
 == WANTS
@@ -28,6 +31,7 @@ Version: 0.6.1
     # set the default options; options will be camelized and converted to REST request parameters.
     AmazonAssociate::Request.configure do |options|
       options[:aWS_access_key_id] = [your developer token]
+      options[:secrety_key] = [your secret key]
     end
 
     # options provided on method call will merge with the default options
@@ -92,6 +96,7 @@ Filesystem caching is now available.
   
   AmazonAssociate::Request.configure do |options| 
     options[:aWS_access_key_id] = [your developer token]
+    options[:scret_key] = [your secret key]
     options[:caching_strategy] = :filesystem
     options[:caching_options] = {
       :disk_quota      => 200, 
