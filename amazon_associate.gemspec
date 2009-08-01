@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{amazon_associate}
-  s.version = "0.6.5"
+  s.version = "0.7.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Dan Pickett"]
-  s.date = %q{2009-06-30}
+  s.date = %q{2009-08-01}
   s.description = %q{interfaces with Amazon Associate's API using Hpricot}
   s.email = %q{dpickett@enlightsolutions.com}
   s.extra_rdoc_files = [
@@ -40,11 +40,10 @@ Gem::Specification.new do |s|
      "test/test_helper.rb",
      "test/utilities/filesystem_test_helper.rb"
   ]
-  s.has_rdoc = true
   s.homepage = %q{http://github.com/dpickett/amazon_associate}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.2}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Amazon Associates API Interface using Hpricot}
   s.test_files = [
     "test/amazon_associate/browse_node_lookup_test.rb",
