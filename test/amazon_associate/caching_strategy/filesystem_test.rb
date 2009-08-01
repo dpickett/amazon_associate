@@ -74,7 +74,7 @@ class AmazonAssociate::CachingStrategy::FilesystemTest < Test::Unit::TestCase
       get_cache_directory
       get_valid_caching_options
       @resp = AmazonAssociate::Request.item_lookup("0974514055")
-      @filename = Digest::SHA1.hexdigest(@resp.request_url)
+      @filename = Digest::SHA1.hexdigest(@resp.unsigned_url)
     end
     
     teardown do
@@ -122,11 +122,6 @@ class AmazonAssociate::CachingStrategy::FilesystemTest < Test::Unit::TestCase
       do_request
     end
     
-    should "return the same response as the original request" do
-      original = @resp.doc.to_s
-      do_request
-      assert_equal(original, @resp.doc.to_s)
-    end
   end
   
   context "sweeping cached requests" do

@@ -17,7 +17,7 @@ module AmazonAssociate
 
         def cache(request, response)
           path = self.cache_path
-          cached_filename = Digest::SHA1.hexdigest(response.request_url)
+          cached_filename = Digest::SHA1.hexdigest(request)
           cached_folder = cached_filename[0..2]
         
           FileUtils.mkdir_p(File.join(path, cached_folder, cached_folder))

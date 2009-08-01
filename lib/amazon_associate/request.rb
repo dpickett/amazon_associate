@@ -249,6 +249,7 @@ module AmazonAssociate
         end
 
         response = Response.new(res.body, request_url)
+        response.unsigned_url = unsigned_url
 
         if caching_enabled?
           cache_response(unsigned_url, response, self.options[:caching_strategy]) 
@@ -258,7 +259,7 @@ module AmazonAssociate
       response
     end
   
-    attr_accessor :request_url
+    attr_accessor :request_url, :unsigned_url
 
     protected
       def self.log(s)
@@ -293,7 +294,7 @@ module AmazonAssociate
           qs << "&#{camelize(k.to_s)}=#{URI.encode(v.to_s)}"
         }
 
-        "#{url}#{qs}"
+        @unsigned_url = "#{url}#{qs}"
       end
 
       def self.prepare_signed_url(opts)
