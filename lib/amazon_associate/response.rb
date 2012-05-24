@@ -1,7 +1,7 @@
 module AmazonAssociate
   # Response object returned after a REST call to Amazon service.
   class Response
-    
+
     attr_accessor :request_url, :unsigned_url
     # XML input is in string format
     def initialize(xml, request_url)
@@ -10,7 +10,7 @@ module AmazonAssociate
       @item_page = nil
       @total_results = nil
       @total_pages = nil
-    
+
       self.request_url = request_url
     end
 

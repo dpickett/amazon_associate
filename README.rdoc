@@ -1,25 +1,25 @@
 == amazon-associate
 
-Generic Amazon E-commerce REST API using Hpricot with configurable 
-default options and method call options. Uses Response and 
+Generic Amazon E-commerce REST API using Hpricot with configurable
+default options and method call options. Uses Response and
 Element wrapper classes for easy access to REST XML output. It supports ECS 4.0.
 
-It is generic, so you can easily extend <tt>AmazonAssociate::Request</tt> to support 
+It is generic, so you can easily extend <tt>AmazonAssociate::Request</tt> to support
 other not implemented REST operations; and it is also generic because it just wraps around
 Hpricot element object, instead of providing one-to-one object/attributes to XML elements map.
 
-If in the future, there is a change in REST XML output structure, 
-no changes will be required on <tt>amazon-ecs</tt> library, 
+If in the future, there is a change in REST XML output structure,
+no changes will be required on <tt>amazon-ecs</tt> library,
 instead you just need to change the element path.
 
-NOTE: You must now specify a secret key to support request signing as 
+NOTE: You must now specify a secret key to support request signing as
 required by Amazon.
 
 Version: 0.6.1
 
 == WANTS
 * instance based refactoring (singletons are not ideal here)
- 
+
 == INSTALLATION
 
   $ gem install dpickett-amazon_associate
@@ -27,7 +27,7 @@ Version: 0.6.1
 == EXAMPLE
 
     require 'amazon_associate'
-	
+
     # set the default options; options will be camelized and converted to REST request parameters.
     AmazonAssociate::Request.configure do |options|
       options[:aWS_access_key_id] = [your developer token]
@@ -54,32 +54,32 @@ Version: 0.6.1
       # or return AmazonAssociate::Element instance
       atts = item.search_and_convert('itemattributes')
       atts.get('title')
-  
+
       # return first author or a string array of authors
       atts.get('author')          # 'Author 1'
       atts.get_array('author')    # ['Author 1', 'Author 2', ...]
-  
+
       # return an hash of children text values with the element names as the keys
       item.get_hash('smallimage') # {:url => ..., :width => ..., :height => ...}
-  
+
       # note that '/' returns Hpricot::Elements array object, nil if not found
       reviews = item/'editorialreview'
-  
+
       # traverse through Hpricot elements
       reviews.each do |review|
         # Getting hash value out of Hpricot element
         AmazonAssociate::Element.get_hash(review) # [:source => ..., :content ==> ...]
-    
+
         # Or to get unescaped HTML values
         AmazonAssociate::Element.get_unescaped(review, 'source')
         AmazonAssociate::Element.get_unescaped(review, 'content')
-        
+
         # Or this way
         el = AmazonAssociate::Element.new(review)
         el.get_unescaped('source')
         el.get_unescaped('content')
       end
-      
+
       # returns AmazonAssociate::Element instead of string
       item.search_and_convert('itemattributes').
     end
@@ -93,20 +93,20 @@ http://www.awszone.com/scratchpads/aws/ecs.us/index.aws
 == CACHING
 
 Filesystem caching is now available.
-  
-  AmazonAssociate::Request.configure do |options| 
+
+  AmazonAssociate::Request.configure do |options|
     options[:aWS_access_key_id] = [your developer token]
     options[:scret_key] = [your secret key]
     options[:caching_strategy] = :filesystem
     options[:caching_options] = {
-      :disk_quota      => 200, 
-      :cache_path      => <path where you want to store requests>, 
+      :disk_quota      => 200,
+      :cache_path      => <path where you want to store requests>,
       :sweep_frequency => 4
     }
   end
-  
+
 The above command will cache up to 200MB of requests. It will purge the cache every 4 hours or when the disk quota has been exceeded.
-  
+
 Every request will be stored in the cache path. On every request, AmazonAssociate::Request will check for the presence of the cached file before querying Amazon directly.
 
 == LINKS
