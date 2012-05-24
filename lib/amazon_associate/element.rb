@@ -6,7 +6,7 @@ module AmazonAssociate
       @element = element
     end
 
-    # Returns Hpricot::Elments object    
+    # Returns Hpricot::Elments object
     def elem
       @element
     end
@@ -56,7 +56,7 @@ module AmazonAssociate
       result
     end
 
-    # Similar to #get_unescaped, except an element object must be passed-in.    
+    # Similar to #get_unescaped, except an element object must be passed-in.
     def self.get_unescaped(element, path="")
       result = get(element, path)
       CGI::unescapeHTML(result) if result
@@ -65,7 +65,7 @@ module AmazonAssociate
     # Similar to #get_array, except an element object must be passed-in.
     def self.get_array(element, path="")
       return unless element
-  
+
       result = element/path
       if (result.is_a? Hpricot::Elements) || (result.is_a? Array)
         parsed_result = []
@@ -88,7 +88,7 @@ module AmazonAssociate
         result = result.children
         result.each do |item|
           hash[item.name.to_sym] = item.inner_html
-        end 
+        end
         hash
       end
     end
